@@ -9,6 +9,7 @@ class Task extends BaseModel {
 		this.data = {
 			...this.data,
 			task: '',
+			description: '',
 			project: null,
 			category: null,
 			started_at: Date.now(),

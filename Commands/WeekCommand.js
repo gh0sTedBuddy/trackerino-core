@@ -30,10 +30,10 @@ function WeekCommand (_input, _instance) {
 				}
 				categories[_category] += _amount
 
-				if(!projects[project]) {
-					projects[project] = 0
+				if(!projects[_project]) {
+					projects[_project] = 0
 				}
-				projects[project] += _amount
+				projects[_project] += _amount
 			})
 			this.say('######')
 			this.say(`# ${ _date }: ${ _dayAmount } h`)

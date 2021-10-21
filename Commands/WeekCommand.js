@@ -19,9 +19,9 @@ function WeekCommand (_input, _instance) {
 			let _date = format(_day.started_at, this.options.dateFormat)
 			let _dayAmount = 0
 			_day.tasks.forEach(task => {
-				let _amount = total.amount || 0
-				let _project = total.project || 'other'
-				let _category = total.category || 'other'
+				let _amount = task.amount || 0
+				let _project = task.project || 'other'
+				let _category = task.category || 'other'
 				_total += _amount
 				_dayAmount += amount
 

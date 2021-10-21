@@ -21,6 +21,7 @@ const ListsCmd = require('./ListsCommand')
 const ListCmd = require('./ListCommand')
 const TrackerCmd = require('./TrackerCommand')
 const TrackersCmd = require('./TrackersCommand')
+const WeekCmd = require('./WeekCommand')
 module.exports = {
 	DebugCmd,
 	ConfigCmd,
@@ -37,7 +38,7 @@ module.exports = {
 
 	TasksCmd,
 	UpdateCmd,
-	TodayCmd,
+	TodayCmd, WeekCmd,
 	TodoCmd, TodosCmd, DoneCmd,
 	ListsCmd, ListCmd,
 	TrackerCmd, TrackersCmd

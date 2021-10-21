@@ -23,7 +23,7 @@ function WeekCommand (_input, _instance) {
 				let _project = task.project || 'other'
 				let _category = task.category || 'other'
 				_total += _amount
-				_dayAmount += amount
+				_dayAmount += _amount
 
 				if(!categories[_category]) {
 					categories[_category] = 0

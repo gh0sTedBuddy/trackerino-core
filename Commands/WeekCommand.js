@@ -16,44 +16,46 @@ function WeekCommand (_input, _instance) {
 
 	allDays.forEach(_day => {
 		if(Array.isArray(_day.tasks) && _day.tasks.length > 0) {
+			let _date = format(_day.started_at, this.options.dateFormat)
+			let _dayAmount = 0
 			_day.tasks.forEach(task => {
-				if(task.category) {
-					if(!categories[task.category]) {
-						categories[task.category] = 0
-					}
-					categories[task.category] += (task.amount || 0)
-				} else {
-					categories.other += (task.amount || 0)
-				}
+				let _amount = total.amount || 0
+				let _project = total.project || 'other'
+				let _category = total.category || 'other'
+				_total += _amount
+				_dayAmount += amount
 
-				if(task.project) {
-					if(!projects[task.project]) {
-						projects[task.project] = 0
-					}
-
-					projects[task.project] += (task.amount || 0)
-				} else {
-					projects.other += (task.amount || 0)
+				if(!categories[_category]) {
+					categories[_category] = 0
 				}
+				categories[_category] += _amount
+
+				if(!projects[project]) {
+					projects[project] = 0
+				}
+				projects[project] += _amount
 			})
+			this.say('######')
+			this.say(`# ${ _date }: ${ _dayAmount } h`)
 		}
 	})
 
-	if(Object.values(projects).length > 0) {
+	this.say('######')
+	this.say(`TOTAL:\t${_total} h`)
+
+	if(Object.values(projects).filter(v => v > 0).length > 0) {
 		this.say('by projects:')
 		Object.keys(projects).forEach(_key => {
 			this.say(`\t- ${_key}:\t\t${projects[_key]} h`)
 		})
 	}
 
-	if(Object.values(categories).length > 0) {
+	if(Object.values(categories).filter(v => v > 0).length > 0) {
 		this.say('by categories:')
 		Object.keys(categories).forEach(_key => {
 			this.say(`\t- ${_key}:\t\t${categories[_key]} h`)
 		})
 	}
-
-	this.say(`TOTAL:\t${_total} h`)
 }
 
 module.exports = {

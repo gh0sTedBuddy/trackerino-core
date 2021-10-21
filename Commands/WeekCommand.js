@@ -36,24 +36,24 @@ function WeekCommand (_input, _instance) {
 				projects[_project] += _amount
 			})
 			this.say('######')
-			this.say(`# ${ _date }: ${ _dayAmount } h`)
+			this.say(`# ${ _date }: ${ _dayAmount.toFixed(2) } h`)
 		}
 	})
 
 	this.say('######')
-	this.say(`TOTAL:\t${_total} h`)
+	this.say(`TOTAL:\t${_total.toFixed(2)} h`)
 
 	if(Object.values(projects).filter(v => v > 0).length > 0) {
 		this.say('by projects:')
 		Object.keys(projects).forEach(_key => {
-			this.say(`\t- ${_key}:\t\t${projects[_key]} h`)
+			this.say(`\t- ${_key}:\t\t${projects[_key].toFixed(2)} h`)
 		})
 	}
 
 	if(Object.values(categories).filter(v => v > 0).length > 0) {
 		this.say('by categories:')
 		Object.keys(categories).forEach(_key => {
-			this.say(`\t- ${_key}:\t\t${categories[_key]} h`)
+			this.say(`\t- ${_key}:\t\t${categories[_key].toFixed(2)} h`)
 		})
 	}
 }

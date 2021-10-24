@@ -121,9 +121,9 @@ class Trackerino {
 			return this.ask()
 		}
 
-		if(_input.beginsWith('/quit')) {
+		if(_input.startsWith('/quit')) {
 			return this.onClose()
-		} else if(_input.beginsWith('/clear')) {
+		} else if(_input.startsWith('/clear')) {
 			console.clear()
 			return this.ask()
 		}

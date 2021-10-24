@@ -121,11 +121,9 @@ class Trackerino {
 			return this.ask()
 		}
 
-		if(_input.toLowerCase() == 'q' || _input.toLowerCase() == 'quit') {
+		if(_input.match(/\/?q(uit)?/)) {
 			return this.onClose()
-		}
-
-		if(_input.toLowerCase() == 'clear') {
+		} else if(_input.match(/\/?clear/)) {
 			console.clear()
 			return this.ask()
 		}

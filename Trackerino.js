@@ -121,9 +121,9 @@ class Trackerino {
 			return this.ask()
 		}
 
-		if(_input.match(/\/?q(uit)?/)) {
+		if(_input.beginsWith('/quit')) {
 			return this.onClose()
-		} else if(_input.match(/\/?clear/)) {
+		} else if(_input.beginsWith('/clear')) {
 			console.clear()
 			return this.ask()
 		}

@@ -159,7 +159,7 @@ class Trackerino {
 							if('object' === typeof result) {
 								if('delete' === _action) {
 									if(_value != _id) {
-										this.say(`if you want to delete ${ entity } with id ${ _id } please confirm your deletion request by adding the id to your command: /[id].delete [id]`)
+										this.say(`if you want to delete ${ entity } with id ${ _id } please confirm your deletion request by adding the id to your command: /[id].delete [id]`, _input)
 									} else {
 										objects = objects.filter(obj => {
 											if(!obj || !obj.get) {
@@ -169,14 +169,14 @@ class Trackerino {
 										})
 										this.storage().set(entity, objects)
 
-										this.say(`${ entity } with id ${ _id } deleted`)
+										this.say(`${ entity } with id ${ _id } deleted`, _input)
 									}
 									return this.ask()
 								} else if('function' === typeof result[_action]) {
 									let output = await result[_action](_value, this)
 
 									if(!!output && 'string' === typeof output) {
-										this.say(output)
+										this.say(output, _input)
 									}
 								} else {
 									let property = result.get(_action)
@@ -190,12 +190,12 @@ class Trackerino {
 							return this.ask()
 						} else {
 							// list object information
-							this.say(`available properties/actions for ${ _id }:`)
+							this.say(`available properties/actions for ${ _id }:`, _input)
 							let props = Object.keys(result.getData())
 							for (let _key = 0; _key < props.length; _key++) {
 								let propName = props[_key]
 								if('function' === typeof result[propName]) {
-									this.say(`- ${ propName } = ${result.get(propName)}`)
+									this.say(`- ${ propName } = ${result.get(propName)}`, _input)
 								}
 							}
 							return this.ask()

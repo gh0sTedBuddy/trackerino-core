@@ -44,10 +44,15 @@ function ConfigCommand (_input) {
 
 		this.options.storage.set('config', _config)
 	} else {
-		console.log('show config')
+		this.say('show config')
 		let keys = Object.keys(_config)
 		for(let k in keys) {
-			console.log("\t-", keys[k], _config[keys[k]])
+			let key = keys[k]
+			let value = _config[key]
+			if(key.endsWith('token')) {
+				value = '*** SNIPPED ***'
+			}
+			this.say("\t-", key, value)
 		}
 	}
 }

@@ -245,7 +245,7 @@ class Trackerino {
 		}
 	}
 
-	add (task) {
+	add (description) {
 		let isIdle = arguments[1] || false
 		let started_at = this.getLastTaskEndTime(this.options.storage.get('started_at', Date.now()))
 		let ended_at = this.isRealTime ? Date.now() : this.currentTime
@@ -259,7 +259,7 @@ class Trackerino {
 		let task = new Models.Task({
 			project: !!isIdle ? null : this.options.storage.get('project'),
 			category: !!isIdle ? null : this.options.storage.get('category'),
-			task: task,
+			task: description,
 			started_at: started_at,
 			ended_at: ended_at,
 			is_idle: !!isIdle,

@@ -122,7 +122,6 @@ class Trackerino {
 
 		if(!_input) {
 			this.logError('no input given')
-			this.ask()
 			return
 		}
 
@@ -131,7 +130,6 @@ class Trackerino {
 			let inputParts = _input.split(' ')
 			if(inputParts.shift().toLowerCase() == `/${ _key }`) {
 				let result = this.commands[_key].handle(inputParts.join(' '))
-				this.ask()
 				return result
 			}
 		}
@@ -200,21 +198,15 @@ class Trackerino {
 								}
 							}
 						}
-						this.ask()
 						return output
 					}
 				}
 			}
 			this.logError(`command not found ${ _input }`)
-			this.ask()
 			return null
 		}
 
-		let output = this.add(_input)
-
-		this.ask()
-
-		return output
+		return this.add(_input)
 	}
 
 	getLastTaskEndTime (defaultValue = null) {

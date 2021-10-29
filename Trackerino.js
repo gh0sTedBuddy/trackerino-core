@@ -22,7 +22,8 @@ class Trackerino {
 				onAsk: () => {},
 				onClose: () => {},
 				onOutput: () => {},
-				onError: () => {}
+				onError: () => {},
+				onBeforeAnswer: () => {}
 			},
 			...(arguments[0] || {})
 		}
@@ -65,8 +66,9 @@ class Trackerino {
 		this.registerCommand({
 			cmd: 'idle',
 			handle: _input => {
-				this.add(_input, true)
-				return this.ask()
+				let output = this.add(_input, true)
+				this.ask()
+				return output
 			}
 		})
 
@@ -81,7 +83,7 @@ class Trackerino {
 					this.currentTime = Date.now()
 					this.say('set back to real time.')
 				}
-				return this.ask()
+				return this.currentTime
 			}
 		})
 	}
@@ -116,24 +118,21 @@ class Trackerino {
 	}
 
 	async getAnswer (_input) {
-		if(!_input) {
-			this.logError('no description given')
-			return this.ask()
-		}
+		this.options.onBeforeAnswer(_input, this)
 
-		if(_input.startsWith('/quit')) {
-			return this.onClose()
-		} else if(_input.startsWith('/clear')) {
-			console.clear()
-			return this.ask()
+		if(!_input) {
+			this.logError('no input given')
+			this.ask()
+			return
 		}
 
 		// check for commands
 		for(let _key in this.commands) {
 			let inputParts = _input.split(' ')
 			if(inputParts.shift().toLowerCase() == `/${ _key }`) {
-				this.commands[_key].handle(inputParts.join(' '))
-				return this.ask()
+				let result = this.commands[_key].handle(inputParts.join(' '))
+				this.ask()
+				return result
 			}
 		}
 
@@ -152,14 +151,15 @@ class Trackerino {
 						return !!obj.get('id') && obj.get('id') === _id
 					})
 
-
 					if(!!result && result.length > 0) {
 						result = result.shift()
+						let output = null
 						if(!!_action) {
 							if('object' === typeof result) {
 								if('delete' === _action) {
 									if(_value != _id) {
 										this.say(`if you want to delete ${ entity } with id ${ _id } please confirm your deletion request by adding the id to your command: /[id].delete [id]`, _input)
+										output = false
 									} else {
 										objects = objects.filter(obj => {
 											if(!obj || !obj.get) {
@@ -170,47 +170,51 @@ class Trackerino {
 										this.storage().set(entity, objects)
 
 										this.say(`${ entity } with id ${ _id } deleted`, _input)
+										output = true
 									}
-									return this.ask()
 								} else if('function' === typeof result[_action]) {
-									let output = await result[_action](_value, this)
+									output = await result[_action](_value, this)
 
 									if(!!output && 'string' === typeof output) {
 										this.say(output, _input)
 									}
 								} else {
-									let property = result.get(_action)
-									if('undefined' !== typeof property) {
+									output = result.get(_action)
+									if('undefined' !== typeof output) {
 										result.set(_action, _value)
 									} else {
 										this.logError(`no action/property ${ _action } on ${ _id } found`)
 									}
 								}
 							}
-							return this.ask()
 						} else {
 							// list object information
 							this.say(`available properties/actions for ${ _id }:`, _input)
 							let props = Object.keys(result.getData())
+							output = {}
 							for (let _key = 0; _key < props.length; _key++) {
 								let propName = props[_key]
 								if('function' === typeof result[propName]) {
 									this.say(`- ${ propName } = ${result.get(propName)}`, _input)
+									output[propName] = result.get(propName)
 								}
 							}
-							return this.ask()
 						}
-						break
+						this.ask()
+						return output
 					}
 				}
 			}
 			this.logError(`command not found ${ _input }`)
-			return this.ask()
+			this.ask()
+			return null
 		}
 
-		this.add(_input)
+		let output = this.add(_input)
 
 		this.ask()
+
+		return output
 	}
 
 	getLastTaskEndTime (defaultValue = null) {
@@ -252,8 +256,7 @@ class Trackerino {
 		this.options.storage.increase('totalAmount', amount)
 
 		let tasks = this.options.storage.get('tasks', [])
-
-		tasks.push(new Models.Task({
+		let task = new Models.Task({
 			project: !!isIdle ? null : this.options.storage.get('project'),
 			category: !!isIdle ? null : this.options.storage.get('category'),
 			task: task,
@@ -261,7 +264,8 @@ class Trackerino {
 			ended_at: ended_at,
 			is_idle: !!isIdle,
 			amount: amount
-		}))
+		})
+		tasks.push(task)
 
 		this.options.storage.set('tasks', tasks)
 
@@ -271,6 +275,8 @@ class Trackerino {
 		} else {
 			this.say(`✅ awesome! that only took you ${ amount } hours (or ${ (amount * 60).toFixed(2) } minutes). 👍`)
 		}
+
+		return task
 	}
 
 	onTick () {
@@ -292,12 +298,12 @@ class Trackerino {
 
 	onClose () {
 		this.save(() => {
-			this.say("\n👋 BYE 😊\n")
 			if(this.ticker !== null) {
 				clearInterval(this.ticker)
 				this.ticker = null
 			}
-			process.exit(0)
+
+			this.options.onClose()
 		})
 	}
 

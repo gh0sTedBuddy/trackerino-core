@@ -107,14 +107,14 @@ class Trackerino {
 		this.options.onOutput(text, cmd)
 	}
 
-	ask () {
-		let question = [this.__(`⏱  What have you done?`)]
+	ask (_q = null) {
+		let question = [_q || this.__(`⏱  What have you done?`)]
 		let project = this.options.storage.get('project', null)
 		let category = this.options.storage.get('category', null)
 		if(!!project || !!category) {
 			question.push(`[\x1b[36m${ [project,category].filter(e => !!e).join(`\x1b[0m / \x1b[32m`) }\x1b[0m]`)
 		}
-		this.options.onAsk(question.join(' ') + ' ', this.getAnswer.bind(this))
+		this.options.onAsk(question.join(' ') + ' ', this.getAnswer.bind(this), this)
 	}
 
 	async getAnswer (_input) {

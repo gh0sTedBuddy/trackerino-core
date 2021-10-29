@@ -4,58 +4,7 @@ function CategoriesCommand (_input) {
 	let categories = this.options.storage.get('categories', [])
 	let result = null
 	if(!!categories && categories.length) {
-		if(!!_input) {
-			result = {
-				days: [],
-				total: 0,
-			}
-			let tasks = []
-			let files = this.options.storage.getAll()
-
-			// read tasks from all days for defined category
-			files.forEach(content => {
-				try {
-					let _date = format(content.started_at, this.options.dateFormat)
-					if(!!content && !!content.tasks && content.tasks.length > 0) {
-						let dayTasks = content.tasks.filter(task => !!task && !!task.category && task.category.toLowerCase() === _input.toLowerCase())
-						let dayAmount = dayTasks.reduce((v,t) => v+t.amount, 0)
-
-						tasks = [...tasks, ...dayTasks]
-
-						if(dayAmount > 0) {
-							result.days[_date] = {
-								started_at: content.started_at,
-								amount: dayAmount,
-								count: dayTasks.length
-							}
-							this.say(`${ _date } (${ dayTasks.length }): ${ dayAmount.toFixed(2) } hours`)
-						}
-					}
-				} catch(err) {
-					this.logError(err)
-				}
-			})
-
-			if(tasks.length > 0) {
-				let categories = this.options.storage.get('categories')
-				let _amount = tasks.reduce((v,t) => v + t.amount, 0.0)
-
-				categories = categories.map(cat => {
-					if(cat.get('name').toLowerCase() == _input.toLowerCase()) {
-						cat.set('amount', _amount)
-						cat.amount = _amount
-					}
-
-					return cat
-				})
-
-				this.options.storage.set('categories', categories)
-
-				result.total = _amount
-				this.say(`${ _input } => ${ _amount.toFixed(2) }`)
-			}
-			// **/
-		} else {
+		if(!_input) {
 			let currentCategory = this.options.storage.get('category', null)
 
 			result = []
@@ -80,7 +29,63 @@ function CategoriesCommand (_input) {
 					this.say(output.join("\t"))
 				})
 			}
+
+			return result
 		}
+
+		result = {
+			days: [],
+			total: 0,
+		}
+
+		let categories = this.options.storage.get('categories')
+		let files = this.options.storage.getAll()
+
+		categories = categories.map(cat => {
+			if(cat.get('name').toLowerCase() == _input.toLowerCase() || cat.get('id').toLowerCase() == _input.toLowerCase()) {
+				let _amount = cat.get('amount', 0)
+				let tasks = []
+
+				files.forEach(content => {
+					try {
+						let _date = format(content.started_at, this.options.dateFormat)
+						if(!!content && !!content.tasks && content.tasks.length > 0) {
+							let dayTasks = content.tasks.filter(task => !!task && !!task.category && task.category.toLowerCase() === cat.get('name', '').toLowerCase())
+							let dayAmount = dayTasks.reduce((v,t) => v+t.amount, 0)
+
+							tasks = [...tasks, ...dayTasks]
+
+							if(dayAmount > 0) {
+								result.days[_date] = {
+									started_at: content.started_at,
+									amount: dayAmount,
+									count: dayTasks.length
+								}
+								this.say(`${ _date } (${ dayTasks.length }): ${ dayAmount.toFixed(2) } hours`)
+							}
+						}
+					} catch(err) {
+						this.logError(err)
+					}
+				})
+
+				if(tasks.length > 0) {
+					_amount = tasks.reduce((v,t) => v + t.amount, 0.0)
+				}
+
+				result.total = _amount
+
+				cat.set('amount', _amount)
+				cat.amount = _amount
+
+				this.say(`${ cat.get('name') } => ${ _amount.toFixed(2) }`)
+			}
+
+			return cat
+		})
+
+		this.options.storage.set('categories', categories)
+		// **/
 	} else {
 		this.logError(`no categories yet`)
 		this.say('add categories by /category [CATEGORYNAME]', [])
@@ -94,6 +99,8 @@ module.exports = {
 	description: 'prints a list of all categories',
 	params: [{
 		name: 'name',
+		type: 'String',
+		optional: true,
 		description: 'the name or id for the category to see a full statistic to.'
 	}],
 	handle: CategoriesCommand

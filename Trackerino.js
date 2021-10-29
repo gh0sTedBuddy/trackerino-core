@@ -118,6 +118,13 @@ class Trackerino {
 	}
 
 	async getAnswer (_input) {
+		let response = {
+			command: _input,
+			input: _input,
+			entity: null,
+			data: null
+		}
+
 		this.options.onBeforeAnswer(_input, this)
 
 		if(!_input) {
@@ -129,8 +136,9 @@ class Trackerino {
 		for(let _key in this.commands) {
 			let inputParts = _input.split(' ')
 			if(inputParts.shift().toLowerCase() == `/${ _key }`) {
-				let result = this.commands[_key].handle(inputParts.join(' '))
-				return result
+				response.data = this.commands[_key].handle(inputParts.join(' '))
+				response.command = _key
+				return response
 			}
 		}
 
@@ -151,34 +159,44 @@ class Trackerino {
 
 					if(!!result && result.length > 0) {
 						result = result.shift()
-						let output = null
 						if(!!_action) {
 							if('object' === typeof result) {
 								if('delete' === _action) {
 									if(_value != _id) {
 										this.say(`if you want to delete ${ entity } with id ${ _id } please confirm your deletion request by adding the id to your command: /[id].delete [id]`, _input)
-										output = false
+										response.data = false
 									} else {
 										objects = objects.filter(obj => {
-											if(!obj || !obj.get) {
+											if(!obj || !obj.get || !obj.get('id')) {
 												return false
 											}
-											return !!obj.get('id') && obj.get('id') !== _id
-										})
-										this.storage().set(entity, objects)
 
-										this.say(`${ entity } with id ${ _id } deleted`, _input)
-										output = true
+											if (obj.get('id') == _id) {
+												response.entity = obj
+												return false
+											}
+
+											return true
+										})
+
+										if(!response.entity) {
+											this.logError(`${ entity } with id ${ _id } not found!`)
+										} else {
+											this.storage().set(entity, objects)
+
+											this.say(`${ entity } with id ${ _id } deleted`, _input)
+											response.data = true
+										}
 									}
 								} else if('function' === typeof result[_action]) {
-									output = await result[_action](_value, this)
+									response.data = await result[_action](_value, this)
 
-									if(!!output && 'string' === typeof output) {
-										this.say(output, _input)
+									if(!!response.data && 'string' === typeof response.data) {
+										this.say(response.data, _input)
 									}
 								} else {
-									output = result.get(_action)
-									if('undefined' !== typeof output) {
+									response.data = result.get(_action)
+									if('undefined' !== typeof response.data) {
 										result.set(_action, _value)
 									} else {
 										this.logError(`no action/property ${ _action } on ${ _id } found`)
@@ -189,16 +207,16 @@ class Trackerino {
 							// list object information
 							this.say(`available properties/actions for ${ _id }:`, _input)
 							let props = Object.keys(result.getData())
-							output = {}
+							response.data = {}
 							for (let _key = 0; _key < props.length; _key++) {
 								let propName = props[_key]
 								if('function' === typeof result[propName]) {
 									this.say(`- ${ propName } = ${result.get(propName)}`, _input)
-									output[propName] = result.get(propName)
+									response.data[propName] = result.get(propName)
 								}
 							}
 						}
-						return output
+						return response
 					}
 				}
 			}
@@ -289,6 +307,10 @@ class Trackerino {
 	}
 
 	onClose () {
+		this.quit()
+	}
+
+	quit () {
 		this.save(() => {
 			if(this.ticker !== null) {
 				clearInterval(this.ticker)

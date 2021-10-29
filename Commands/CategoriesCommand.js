@@ -18,7 +18,7 @@ function CategoriesCommand (_input) {
 					let _date = format(content.started_at, this.options.dateFormat)
 					if(!!content && !!content.tasks && content.tasks.length > 0) {
 						let dayTasks = content.tasks.forEach(task => {
-							if(!!task && !!task.get('category') && task.get('category').toLowerCase() === _input.toLowerCase()) {
+							if(!!task && !!task.category && task.category.toLowerCase() === _input.toLowerCase()) {
 								tasks.push(task)
 							}
 						})

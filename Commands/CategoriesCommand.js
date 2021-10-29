@@ -17,13 +17,11 @@ function CategoriesCommand (_input) {
 				try {
 					let _date = format(content.started_at, this.options.dateFormat)
 					if(!!content && !!content.tasks && content.tasks.length > 0) {
-						let dayTasks = content.tasks.forEach(task => {
-							if(!!task && !!task.category && task.category.toLowerCase() === _input.toLowerCase()) {
-								tasks.push(task)
-							}
-						})
-
+						let dayTasks = content.tasks.filter(task => !!task && !!task.category && task.category.toLowerCase() === _input.toLowerCase())
 						let dayAmount = dayTasks.reduce((v,t) => v+t.amount, 0)
+
+						tasks = [...tasks, ...dayTasks]
+
 						if(dayAmount > 0) {
 							result.days[_date] = {
 								started_at: content.started_at,

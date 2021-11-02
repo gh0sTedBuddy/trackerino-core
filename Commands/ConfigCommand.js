@@ -15,7 +15,7 @@ function ConfigCommand (_input) {
 				}
 			}
 			_config[key] = data
-			console.log(`set ${key} to ${data}`)
+			this.say(`set ${key} to ${data}`)
 		}
 	}
 	if(_input) {
@@ -59,6 +59,17 @@ function ConfigCommand (_input) {
 
 module.exports = {
 	cmd: 'config',
-	description: 'sets configuration variables',
+	description: 'sets configuration variables. shows all configuration variables if key is empty',
+	params: [{
+		name: 'key',
+		type: 'String',
+		optional: true,
+		description: 'the key to show or set.'
+	}, {
+		name: 'value',
+		type: 'Mixed',
+		optional: true,
+		description: 'the new value for the given key'
+	}],
 	handle: ConfigCommand
 }

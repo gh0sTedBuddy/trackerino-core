@@ -21,7 +21,7 @@ async function ExportCommand (_input) {
 				"TASK",
 			])
 
-			tasks.map(task => csvData.push([
+			tasks.forEach(task => csvData.push([
 				format(this.currentTime, this.options.dateFormat),
 				format(task.get('started_at'), this.options.timeFormat),
 				format(task.get('ended_at'), this.options.timeFormat),
@@ -31,14 +31,13 @@ async function ExportCommand (_input) {
 				task.get('task')
 			]))
 
-			this.say(csvData.map(entry => {
+			return csvData.map(entry => {
 				return `"${ entry.join("\"\t\"") }"`
-			}).join("\n"))
-			break
+			}).join("\n")
 		case 'json':
 			let output = []
 
-			tasks.map(task => output.push({
+			tasks.forEach(task => output.push({
 				date: format(this.currentTime, this.options.dateFormat),
 				started_at: format(task.started_at, this.options.timeFormat),
 				ended_at: format(task.ended_at, this.options.timeFormat),
@@ -47,8 +46,7 @@ async function ExportCommand (_input) {
 				task: task.task
 			}))
 
-			this.say(JSON.stringify(output))
-			break
+			return JSON.stringify(output)
 		case 'mite':
 			const mite_api_endpoint = this.get('mite_api_endpoint')
 			const mite_api_key = this.get('mite_api_key')
@@ -84,7 +82,7 @@ async function ExportCommand (_input) {
 					}
 					let resp = await axios.post(`${ mite_api_endpoint }/time_entries.json`, data)
 
-					console.log(data, resp.data || null)
+					this.say(data, resp.data || null)
 				}
 			}
 			break

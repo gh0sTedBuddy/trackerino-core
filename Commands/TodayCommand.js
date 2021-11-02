@@ -1,9 +1,17 @@
 const {format} = require('date-fns')
 function TodayCommand (_input, _instance) {
+	let result = {
+		started_at: this.options.storage.get('started_at', null),
+		project: this.options.storage.get('project', null),
+		category: this.options.storage.get('category', null),
+		tasks: [],
+		total: 0,
+		idle: 0
+	}
+
 	let tasks = this.options.storage.get('tasks', [])
 	let totalTime = 0
 	let idleTime = 0
-	let currentProject = this.options.storage.get('project', null)
 	this.say(format(this.currentTime, this.options.dateFormat))
 	tasks.map((task, index) => {
 		if(!task) return
@@ -29,6 +37,17 @@ function TodayCommand (_input, _instance) {
 		}
 		totalTime += task.get('amount')
 
+		result.tasks.push({
+			id: task.get('id'),
+			task: task.get('task'),
+			category: task.get('category', null),
+			project: task.get('project', null),
+			amount: task.get('amount', 0),
+			progress: totalTime,
+			is_idle: task.get('is_idle', false),
+			idle_time: idleTime
+		})
+
 		this.say(output.join("\t"))
 	})
 	this.say(
@@ -36,6 +55,11 @@ function TodayCommand (_input, _instance) {
 		`[${ (idleTime).toFixed(2) }] idle`
 	)
 	this.say(`[${ (totalTime - idleTime).toFixed(2) }] total work today.`)
+
+	result.total = totalTime
+	result.idle = idleTime
+
+	return result
 }
 
 module.exports = {

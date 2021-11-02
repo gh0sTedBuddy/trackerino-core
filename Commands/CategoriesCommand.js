@@ -5,30 +5,26 @@ function CategoriesCommand (_input) {
 	let result = null
 	if(!!categories && categories.length) {
 		if(!_input) {
-			let currentCategory = this.options.storage.get('category', null)
-
 			result = []
 
-			if(!!categories && categories.length > 0) {
-				categories.forEach((category, _index) => {
-					if(!category || !category.get('name')) return
+			categories.forEach((category, _index) => {
+				if(!category || !category.get('name')) return
 
-					let output = [category.get('id')]
-					output.push(['[\x1b[36m', category.get('project'), '\x1b[0m]'].join(''))
+				let output = [category.get('id')]
+				output.push(['[\x1b[36m', category.get('project'), '\x1b[0m]'].join(''))
 
-					output.push(`${ '\x1b[32m' }${ category.get('amount').toFixed(2) }${ '\x1b[0m' }`)
-					output.push(category.get('name'))
+				output.push(`${ '\x1b[32m' }${ category.get('amount').toFixed(2) }${ '\x1b[0m' }`)
+				output.push(category.get('name'))
 
-					result.push({
-						id: category.get('id'),
-						name: category.get('name'),
-						total: category.get('amount'),
-						project: category.get('project')
-					})
-
-					this.say(output.join("\t"))
+				result.push({
+					id: category.get('id'),
+					name: category.get('name'),
+					amount: category.get('amount', 0),
+					project: category.get('project')
 				})
-			}
+
+				this.say(output.join("\t"))
+			})
 
 			return result
 		}
@@ -38,7 +34,6 @@ function CategoriesCommand (_input) {
 			total: 0,
 		}
 
-		let categories = this.options.storage.get('categories')
 		let files = this.options.storage.getAll()
 
 		categories = categories.map(cat => {

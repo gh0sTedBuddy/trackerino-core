@@ -24,6 +24,12 @@ function SetTimeCommand (_input, _instance) {
 module.exports = {
 	cmd: 'set',
 	description: 'sets current time to your value',
+	params: [{
+		name: 'time',
+		type: 'String',
+		optional: true,
+		description: 'the new current time to set (format HH:MM)'
+	}],
 	usage: `/set 00:00`,
 	handle: SetTimeCommand
 }

@@ -1,45 +1,35 @@
-const DebugCmd = require('./DebugCommand')
+const CategoriesCmd = require('./CategoriesCommand')
+const CategoryCmd = require('./CategoryCommand')
 const ConfigCmd = require('./ConfigCommand')
-const DeleteCmd = require('./DeleteCommand')
-const DoneCmd = require('./DoneCommand')
 const ExportCmd = require('./ExportCommand')
 const HelpCmd = require('./HelpCommand')
+const ListCmd = require('./ListCommand')
+const ListsCmd = require('./ListsCommand')
 const NowCmd = require('./NowCommand')
 const ProjectCmd = require('./ProjectCommand')
 const ProjectsCmd = require('./ProjectsCommand')
-const CategoryCmd = require('./CategoryCommand')
-const CategoriesCmd = require('./CategoriesCommand')
 const SetStartCmd = require('./SetStartCommand')
 const SetTimeCmd = require('./SetTimeCommand')
 const SyncCmd = require('./SyncCommand')
-const TasksCmd = require('./TasksCommand')
 const TodayCmd = require('./TodayCommand')
 const TodoCmd = require('./TodoCommand')
 const TodosCmd = require('./TodosCommand')
-const UpdateCmd = require('./UpdateCommand')
-const ListsCmd = require('./ListsCommand')
-const ListCmd = require('./ListCommand')
 const TrackerCmd = require('./TrackerCommand')
 const TrackersCmd = require('./TrackersCommand')
 const WeekCmd = require('./WeekCommand')
 module.exports = {
-	DebugCmd,
+	CategoriesCmd, CategoryCmd,
 	ConfigCmd,
-	DeleteCmd,
+	ExportCmd,
+	HelpCmd,
+	ListCmd, ListsCmd,
 	NowCmd,
+	ProjectCmd, ProjectsCmd,
 	SetStartCmd,
 	SetTimeCmd,
 	SyncCmd,
-	ExportCmd,
-	HelpCmd,
-
-	ProjectCmd, ProjectsCmd,
-	CategoryCmd, CategoriesCmd,
-
-	TasksCmd,
-	UpdateCmd,
-	TodayCmd, WeekCmd,
-	TodoCmd, TodosCmd, DoneCmd,
-	ListsCmd, ListCmd,
-	TrackerCmd, TrackersCmd
+	TodayCmd,
+	TodoCmd, TodosCmd,
+	TrackerCmd, TrackersCmd,
+	WeekCmd
 }

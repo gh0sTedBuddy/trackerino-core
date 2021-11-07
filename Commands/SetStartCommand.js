@@ -21,6 +21,7 @@ function SetStartCommand (_input, _instance) {
 
 		startedTime.setHours(hours)
 		startedTime.setMinutes(minutes)
+		startedTime.setSeconds(0)
 
 		this.options.storage.set('started_at', startedTime.getTime())
 

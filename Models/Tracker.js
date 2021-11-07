@@ -34,6 +34,7 @@ class Tracker extends BaseModel {
 			_interface.notify({
 				title: this.get('name', 'Trackerino::Tracker'),
 				message: this.get('message', 'oi'),
+				next_at: this.get('next_tick_at', null),
 				sound: true,
 				wait: true
 			})

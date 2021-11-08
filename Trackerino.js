@@ -28,6 +28,8 @@ class Trackerino {
 			...(arguments[0] || {})
 		}
 
+		console.log(this.options)
+
 		this.commands = {}
 		this.init()
 	}

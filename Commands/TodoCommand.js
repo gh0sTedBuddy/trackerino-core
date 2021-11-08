@@ -4,14 +4,17 @@ function TodoCommand (_input, _instance) {
 	let todos = this.options.storage.get('todos', [])
 	this.say(`➕ add todo: ${ _input } with index ${ todos.length }`)
 
-	todos.push(new Models.Todo({
+	let todo = new Models.Todo({
 		project: project,
 		task: _input
-	}))
+	})
+	todos.push(todo)
 
 	this.options.storage.set('todos', todos)
 
 	this.say(`- to finish this task, you just need to enter /done ${ todos.length - 1 }`)
+
+	return todo
 }
 
 module.exports = {

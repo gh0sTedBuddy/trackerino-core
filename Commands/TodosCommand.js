@@ -1,4 +1,5 @@
 function TodosCommand (_input, _instance) {
+	let result = {}
 	let todos = this.options.storage.get('todos', [])
 	let currentProject = this.options.storage.get('project', null)
 	if(todos && todos.length > 0) {
@@ -9,11 +10,11 @@ function TodosCommand (_input, _instance) {
 				output.push(`☑️  [${ index }] ${ (entry.get('project') ? `[${ entry.get('project') }] ` : '') }${ entry.get('task') }`)
 			}
 		}
-		console.log(`## ${ output.length } todos:`)
+		this.say(`## ${ output.length } todos:`)
 		output.map(line => {
-			console.log(line)
+			this.say(line)
 		})
-		console.log(`to finish a task just enter /todo #[index]`)
+		this.say(`to finish a task just enter /todo #[index]`)
 	}
 }
 

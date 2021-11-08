@@ -2,6 +2,8 @@ const ProjectModel = require('./Project')
 const CategoryModel = require('./Category')
 const BaseModel = require('./BaseModel')
 
+const RandomColor = require('../Helpers/random_color')
+
 class Task extends BaseModel {
 	constructor () {
 		super()
@@ -11,6 +13,7 @@ class Task extends BaseModel {
 			task: '',
 			description: '',
 			project: null,
+			color: RandomColor(),
 			category: null,
 			started_at: Date.now(),
 			ended_at: null,

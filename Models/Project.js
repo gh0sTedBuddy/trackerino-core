@@ -138,7 +138,7 @@ class Project extends BaseModel {
 								_interface.say(`task ${task.get('id')} sent to mite`)
 							}
 						} catch(err) {
-							console.log(err)
+							_interface.logError(err)
 						}
 					}
 				}

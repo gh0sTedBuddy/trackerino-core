@@ -73,7 +73,7 @@ class List extends BaseModel {
 		}
 
 		if(item.get('is_checked')) {
-			console.log('already done. please uncheck first.')
+			_interface.say('already done. please uncheck first.')
 		} else {
 			_interface.getAnswer(`/${ this.get('id') }.check ${ _entry }`)
 			_interface.getAnswer(item.get('title'))

@@ -14,7 +14,7 @@ function TodosCommand (_input, _instance) {
 		output.map(line => {
 			this.say(line)
 		})
-		this.say(`to finish a task just enter /todo #[index]`)
+		this.say(`to finish a task just enter /[id].done`)
 	}
 }
 

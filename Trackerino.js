@@ -65,6 +65,8 @@ class Trackerino {
 		*/
 		this.registerCommand({
 			cmd: 'idle',
+			description: 'saves the given task as idle time',
+			usage: '/idle Pause',
 			handle: _input => {
 				let output = this.add(_input, true)
 				this.ask()
@@ -77,6 +79,7 @@ class Trackerino {
 		*/
 		this.registerCommand({
 			cmd: 'realtime',
+			description: 'switches from set fixed time to current real time',
 			handle: _input => {
 				if(!this.isRealTime) {
 					this.isRealTime = true

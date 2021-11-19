@@ -7,7 +7,7 @@ function TodosCommand (_input, _instance) {
 		for(let index = 0; index < todos.length; index++) {
 			let entry = todos[index]
 			if(!!entry && entry.get && (!currentProject || (currentProject != null && currentProject == entry.get('project')))) {
-				output.push(`☑️  [${ index }] ${ (entry.get('project') ? `[${ entry.get('project') }] ` : '') }${ entry.get('task') }`)
+				output.push(`☑️  [${ entry.get('id') }] ${ (entry.get('project') ? `[${ entry.get('project') }] ` : '') }${ entry.get('task') }`)
 			}
 		}
 		this.say(`## ${ output.length } todos:`)

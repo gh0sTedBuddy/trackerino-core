@@ -13,7 +13,7 @@ class Todo extends BaseModel {
 		}
 	}
 
-	done (_interface) {
+	done (_input, _interface) {
 		_interface.getAnswer(`/${ this.get('id') }.delete ${ this.get('id') }`)
 		_interface.getAnswer(`${ this.get('task') }`)
 		return true

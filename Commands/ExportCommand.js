@@ -21,15 +21,19 @@ async function ExportCommand (_input) {
 				"TASK",
 			])
 
-			tasks.forEach(task => csvData.push([
-				format(this.currentTime, this.options.dateFormat),
-				format(task.get('started_at'), this.options.timeFormat),
-				format(task.get('ended_at'), this.options.timeFormat),
-				task.get('amount').toFixed(2).split('.').join(','),
-				'',
-				task.get('project'),
-				task.get('task')
-			]))
+			tasks.forEach(task => {
+				if('object' == typeof task) {
+					csvData.push([
+						format(this.currentTime, this.options.dateFormat),
+						format(task.get('started_at'), this.options.timeFormat),
+						format(task.get('ended_at'), this.options.timeFormat),
+						task.get('amount').toFixed(2).split('.').join(','),
+						'',
+						task.get('project'),
+						task.get('task')
+					])
+				}
+			})
 
 			return csvData.map(entry => {
 				return `"${ entry.join("\"\t\"") }"`
@@ -37,14 +41,22 @@ async function ExportCommand (_input) {
 		case 'json':
 			let output = []
 
-			tasks.forEach(task => output.push({
-				date: format(this.currentTime, this.options.dateFormat),
-				started_at: format(task.started_at, this.options.timeFormat),
-				ended_at: format(task.ended_at, this.options.timeFormat),
-				amount: task.amount,
-				project: task.project,
-				task: task.task
-			}))
+			tasks.forEach(task => {
+				try {
+					if('object' == typeof task) {
+						output.push({
+							date: format(this.currentTime, this.options.dateFormat),
+							started_at: format(task.get('started_at'), this.options.timeFormat),
+							ended_at: format(task.get('ended_at'), this.options.timeFormat),
+							amount: task.get('amount'),
+							project: task.get('project'),
+							task: task.get('task')
+						})
+					}
+				} catch(err) {
+					this.logError(err)
+				}
+			})
 
 			return JSON.stringify(output)
 		case 'mite':
@@ -60,7 +72,7 @@ async function ExportCommand (_input) {
 
 			for(let _index = 0; _index < tasks.length; _index++) {
 				const task = tasks[_index]
-				if(!task.is_idle) {
+				if(!task.is_idle) {
 					let project = projects.data.find(entry => entry.project.name.toLowerCase() == task.project.toLowerCase())
 					let service = services.data.find(entry => entry.service.name.toLowerCase() == task.category.toLowerCase())
 					if(project) {

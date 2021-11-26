@@ -264,7 +264,7 @@ class Trackerino {
 		let ended_at = this.isRealTime ? Date.now() : this.currentTime
 		let amount = parseFloat(((ended_at - started_at) / 1000 / 60 / 60).toFixed(2))
 
-		if(!this.options.storage.get('totalAmount')) this.options.storage.set('totalAmount', 0)
+		if(!this.options.storage.get('totalAmount', null)) this.options.storage.set('totalAmount', 0)
 
 		this.options.storage.increase('totalAmount', amount)
 
@@ -283,7 +283,7 @@ class Trackerino {
 		this.options.storage.set('tasks', tasks)
 
 		if(isIdle) {
-			this.say(`😴 pssst... you're ${ task || 'sleeping (?!)' } for ${ amount } hours (or ${ (amount * 60).toFixed(2) } minutes). 💤`)
+			this.say(`😴 pssst... you're ${ description || 'sleeping (?!)' } for ${ amount } hours (or ${ (amount * 60).toFixed(2) } minutes). 💤`)
 			if(!!process && !!process.stderr) process.stderr.write("\x07")
 		} else {
 			this.say(`✅ awesome! that only took you ${ amount } hours (or ${ (amount * 60).toFixed(2) } minutes). 👍`)

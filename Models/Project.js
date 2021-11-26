@@ -63,7 +63,7 @@ class Project extends BaseModel {
 	async export (_value, _interface) {
 		let onlyToday = _value && _value.indexOf('--today') >= 0
 
-		_value = _value.split(' ').filter(_i => _i != '--today').join(' ').trim()
+		_value = 'string' == typeof _value ? _value.split(' ').filter(_i => _i != '--today').join(' ').trim() : null
 
 		let tasks = []
 
